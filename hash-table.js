@@ -7,9 +7,12 @@ class KeyValuePair {
 }
 // methods to write:
     // insert (DONE)
-    // resize (call it in insert method when load factor is 0.7)
+    // resize (call it in insert method when load factor is 0.7)(Done)
     // Method for reading data O(1) (DONE)
     // Deleting data O(1) (DONE)
+
+//Issues
+    //Right now resizing is not being done as soon as the load factor becomes 0
 class HashTable {
     constructor(capacity = 4) {
         this. capacity = capacity;
@@ -30,6 +33,24 @@ class HashTable {
         return this.hash(key) % this.data.length;
     }
 
+    resize() {
+        this.capacity = this.capacity * 2;
+        let temp = this.data;
+        this.data = new Array(this.capacity).fill(null);
+        for (let i = 0; i < temp.length; i++){
+            if (temp[i]) {
+                let newIndex = this.hashMod(temp[i].key);
+                let existing = this.data[newIndex];
+                while(existing) {
+                    temp[i].next = existing;
+                    this.data[newIndex] = temp[i];
+                    existing = existing.next
+                }
+                this.data[newIndex] = temp[i];
+            }
+        }
+    }
+
     insertWithHashCollision(key, value) {
         const bucketIndex = this.hashMod(key);
         const newKeyValuePair = new KeyValuePair(key, value);
@@ -47,6 +68,8 @@ class HashTable {
 
     insert(key, value) {
         const bucketIndex = this.hashMod(key);
+        // const loadFactor = this.count / this.capacity;
+        // if (loadFactor >= 0.7) this.resize();
         let existing = this.data[bucketIndex];
         //we will check for duplicate keys first
         //if found update value at that key and return
@@ -58,6 +81,8 @@ class HashTable {
             existing = existing.next;
         }
         this.insertWithHashCollision(key, value);
+        const loadFactor = this.count / this.capacity;
+        if (loadFactor >= 0.7) this.resize();
     }
 
     print() {
