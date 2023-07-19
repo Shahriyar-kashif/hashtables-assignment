@@ -9,7 +9,7 @@ class KeyValuePair {
     // insert (DONE)
     // resize (call it in insert method when load factor is 0.7)
     // Method for reading data O(1) (DONE)
-    // Deleting data O(1)
+    // Deleting data O(1) (DONE)
 class HashTable {
     constructor(capacity = 4) {
         this. capacity = capacity;
@@ -41,6 +41,7 @@ class HashTable {
         }
         else {
             this.data[bucketIndex] = newKeyValuePair;
+            this.count++;
         }
     }
 
@@ -82,6 +83,30 @@ class HashTable {
             existing = existing.next;
         }
         return "key not available in hashtable";
+    }
+
+    deletePair(key) {
+        const bucketIndex = this.hashMod(key);
+        let existing = this.data[bucketIndex];
+        //if current pair in the index matches with the key, delete and return
+        if (existing && existing.key === key) {
+            this.data[bucketIndex] = existing.next;
+            existing.next = null;
+            this.count--;
+            return existing.value;
+        }
+        //if current pair doesnt match check if it is a linked list
+        while(existing.next) {
+            if (existing.next.key === key) {
+                const temp = existing.next;
+                existing.next = temp.next;
+                temp.next = null;
+                this.count--;
+                return temp.value;
+            }
+            existing = existing.next;
+        }
+        return "key not found in hashtable";
     }
 }
 
