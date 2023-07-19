@@ -5,19 +5,11 @@ class KeyValuePair {
         this.next = null;
     }
 }
-// methods to write:
-    // insert (DONE)
-    // resize (call it in insert method when load factor is 0.7)(Done)
-    // Method for reading data O(1) (DONE)
-    // Deleting data O(1) (DONE)
 
-//Issues
-    //Right now resizing is not being done as soon as the load factor becomes 0
 class HashTable {
     constructor(capacity = 4) {
         this. capacity = capacity;
         this.data = new Array(this.capacity).fill(null);
-        //count of key-value pairs in the hash table
         this.count = 0;
     }
 
@@ -54,7 +46,6 @@ class HashTable {
     insertWithHashCollision(key, value) {
         const bucketIndex = this.hashMod(key);
         const newKeyValuePair = new KeyValuePair(key, value);
-        // check whether at this index, a pair is already present
         if (this.data[bucketIndex]) {
             newKeyValuePair.next = this.data[bucketIndex];
             this.data[bucketIndex] = newKeyValuePair;
@@ -68,11 +59,7 @@ class HashTable {
 
     insert(key, value) {
         const bucketIndex = this.hashMod(key);
-        // const loadFactor = this.count / this.capacity;
-        // if (loadFactor >= 0.7) this.resize();
         let existing = this.data[bucketIndex];
-        //we will check for duplicate keys first
-        //if found update value at that key and return
         while (existing) {
             if (existing.key === key) {
                 existing.value = value;
@@ -113,14 +100,12 @@ class HashTable {
     deletePair(key) {
         const bucketIndex = this.hashMod(key);
         let existing = this.data[bucketIndex];
-        //if current pair in the index matches with the key, delete and return
         if (existing && existing.key === key) {
             this.data[bucketIndex] = existing.next;
             existing.next = null;
             this.count--;
             return existing.value;
         }
-        //if current pair doesnt match check if it is a linked list
         while(existing.next) {
             if (existing.next.key === key) {
                 const temp = existing.next;
